@@ -1,0 +1,18 @@
+{
+  "name": "skm-publisher",
+  "version": "1.0.0",
+  "description": "多平台内容发布 Skill — 最快速、最稳定、最少 token 的多平台文章发布，基于Playwright MCP + macOS剪贴板",
+  "author": "skm",
+  "created": "2026-06-04",
+  "platforms": ["zhihu", "csdn", "juejin", "baijiahao", "toutiao", "sohu", "netease", "xiaohongshu", "wechat", "douyin"],
+  "dependencies": {
+    "playwright_mcp": "required",
+    "macos_pbcopy": "required",
+    "yixiaoer": "optional"
+  },
+  "based_on": {
+    "analysis": "multi-platform-publisher-claw",
+    "lessons": "2026-06-04 zhihu drafting experience"
+  },
+  "agent_created": true
+}
