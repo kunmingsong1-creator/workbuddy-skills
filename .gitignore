@@ -1,0 +1,19 @@
+# 日志和临时文件
+*.log
+server_output.txt
+server.js
+server.py
+*.pyc
+__pycache__/
+
+# Node.js
+node_modules/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 敏感配置文件（含 PAT 等密钥，不上传）
+*.conf
+*.env
+.env*

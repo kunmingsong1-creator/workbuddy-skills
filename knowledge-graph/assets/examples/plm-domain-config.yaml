@@ -1,0 +1,259 @@
+# domain_config.yaml — PLM 制造业领域配置示例
+# 适用于：产品全生命周期管理领域的知识库构建
+
+domain:
+  name: "PLM制造业"
+  description: "产品全生命周期管理（PLM）领域知识库，涵盖BOM管理、零部件管理、工艺路线、变更管理等核心业务知识"
+  version: "1.0.0"
+
+# ===== 实体类型定义 =====
+entity_types:
+  - name: component
+    display_name: "零部件"
+    plural_name: "零部件库"
+    description: "产品中的零部件、标准件、外购件"
+    id_pattern: "COMP-{part_number}"
+    properties:
+      - name: part_number
+        display_name: "零部件号"
+        type: string
+        required: true
+      - name: part_name
+        display_name: "零部件名称"
+        type: string
+        required: true
+      - name: category
+        display_name: "零部件分类"
+        type: string
+        description: "如：标准件、外购件、自制件、装配件"
+      - name: material
+        display_name: "材料"
+        type: string
+      - name: specification
+        display_name: "规格参数"
+        type: string
+      - name: unit
+        display_name: "计量单位"
+        type: string
+      - name: supplier
+        display_name: "供应商"
+        type: string
+      - name: image_url
+        display_name: "零部件图片"
+        type: url
+    wiki_template: "assets/templates/component-template.md"
+
+  - name: bom
+    display_name: "BOM结构"
+    plural_name: "BOM结构列表"
+    description: "物料清单（Bill of Materials），定义产品的层级装配结构"
+    id_pattern: "BOM-{product_name}-V{version}"
+    properties:
+      - name: product_name
+        display_name: "产品名称"
+        type: string
+        required: true
+      - name: version
+        display_name: "版本号"
+        type: string
+        required: true
+      - name: level
+        display_name: "BOM层级"
+        type: number
+        required: true
+      - name: parent_part
+        display_name: "父件"
+        type: string
+      - name: child_part
+        display_name: "子件"
+        type: string
+      - name: quantity
+        display_name: "用量"
+        type: number
+      - name: unit
+        display_name: "单位"
+        type: string
+    wiki_template: "assets/templates/bom-template.md"
+
+  - name: process
+    display_name: "工艺路线"
+    plural_name: "工艺路线库"
+    description: "产品制造过程中的工艺步骤和参数"
+    id_pattern: "PROC-{product_name}-{step}"
+    properties:
+      - name: step_number
+        display_name: "工序号"
+        type: string
+        required: true
+      - name: step_name
+        display_name: "工序名称"
+        type: string
+        required: true
+      - name: workstation
+        display_name: "工作中心"
+        type: string
+      - name: tooling
+        display_name: "工装夹具"
+        type: list
+      - name: cycle_time
+        display_name: "工时"
+        type: string
+      - name: notes
+        display_name: "注意事项"
+        type: string
+    wiki_template: "assets/templates/process-template.md"
+
+  - name: ecn
+    display_name: "工程变更"
+    plural_name: "变更记录"
+    description: "工程变更通知（Engineering Change Notice），记录产品设计或工艺的变更"
+    id_pattern: "ECN-{year}-{seq}"
+    properties:
+      - name: ecn_number
+        display_name: "变更编号"
+        type: string
+        required: true
+      - name: description
+        display_name: "变更描述"
+        type: string
+        required: true
+      - name: reason
+        display_name: "变更原因"
+        type: string
+      - name: affected_parts
+        display_name: "受影响零部件"
+        type: list
+      - name: status
+        display_name: "状态"
+        type: string
+        description: "如：草稿、评审中、已批准、已执行、已关闭"
+      - name: effective_date
+        display_name: "生效日期"
+        type: date
+      - name: initiator
+        display_name: "发起人"
+        type: string
+    wiki_template: "assets/templates/ecn-template.md"
+
+  - name: concept
+    display_name: "PLM概念"
+    plural_name: "概念词典"
+    description: "PLM领域的专业术语和概念定义"
+    id_pattern: "CON-{name}"
+    properties:
+      - name: definition
+        display_name: "定义"
+        type: string
+        required: true
+      - name: aliases
+        display_name: "别名"
+        type: list
+      - name: english_name
+        display_name: "英文名称"
+        type: string
+      - name: related_concepts
+        display_name: "相关概念"
+        type: list
+
+  - name: workflow
+    display_name: "业务流程"
+    plural_name: "业务流程库"
+    description: "PLM系统中的审批流程、操作流程"
+    id_pattern: "WF-{name}"
+    properties:
+      - name: name
+        display_name: "流程名称"
+        type: string
+        required: true
+      - name: trigger
+        display_name: "触发条件"
+        type: string
+      - name: steps
+        display_name: "流程步骤"
+        type: list
+      - name: roles
+        display_name: "参与角色"
+        type: list
+      - name: rules
+        display_name: "流程规则"
+        type: string
+
+# ===== 关系类型定义 =====
+relation_types:
+  - name: contains
+    display_name: "包含"
+    source: bom
+    target: component
+    description: "BOM节点包含某个零部件"
+  - name: parent_child
+    display_name: "父子关系"
+    source: bom
+    target: bom
+    description: "BOM层级中的父子关系"
+  - name: uses_process
+    display_name: "使用工艺"
+    source: component
+    target: process
+    description: "零部件使用某工艺路线"
+  - name: affects
+    display_name: "影响"
+    source: ecn
+    target: component
+    description: "工程变更影响某个零部件"
+  - name: replaces
+    display_name: "替代"
+    source: component
+    target: component
+    description: "零部件替代关系（新旧替代或互替）"
+  - name: uses_workflow
+    display_name: "适用流程"
+    source: ecn
+    target: workflow
+    description: "工程变更适用某个审批流程"
+  - name: related_to
+    display_name: "相关"
+    source: concept
+    target: concept
+    description: "概念之间的关联关系"
+
+# ===== 文档分类 =====
+categories:
+  - name: product-specifications
+    display_name: "产品规格书"
+  - name: bom-documents
+    display_name: "BOM文档"
+  - name: process-documents
+    display_name: "工艺文档"
+  - name: ecn-records
+    display_name: "变更记录"
+  - name: user-manuals
+    display_name: "用户手册"
+  - name: industry-standards
+    display_name: "行业标准"
+  - name: training-materials
+    display_name: "培训材料"
+
+# ===== 映射页面定义 =====
+mappings:
+  - name: component-index
+    display_name: "零部件索引"
+    description: "所有零部件的交叉索引表，按分类和编号排列"
+  - name: bom-tree
+    display_name: "BOM树形结构图"
+    description: "产品的层级装配结构可视化"
+  - name: glossary
+    display_name: "PLM术语对照表"
+    description: "英中PLM专业术语对照"
+    template: "assets/templates/glossary-template.md"
+  - name: ecn-timeline
+    display_name: "变更时间线"
+    description: "工程变更的时间线视图"
+
+# ===== 同步目标配置 =====
+sync:
+  platform: "lexiang"             # lexiang | ima | wps | local
+  config:
+    space_id: ""                   # 乐享 space_id（留空则不同步）
+  sync_scope:
+    - wiki
+    - mappings

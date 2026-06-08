@@ -1,0 +1,103 @@
+# domain_config.yaml — 通用领域配置模板（最小配置）
+# 复制此文件，修改后即可快速启动任意领域的知识库
+
+domain:
+  name: "你的领域名称"
+  description: "简述领域范围和目标"
+  version: "1.0.0"
+
+# ===== 实体类型定义 =====
+# 按你的领域需求添加实体类型。每个实体类型需要：
+#   - name: 英文标识（用于目录命名和ID前缀）
+#   - display_name: 中文显示名
+#   - properties: 该实体具有的属性列表
+
+entity_types:
+  - name: item
+    display_name: "条目"
+    plural_name: "条目列表"
+    description: "领域中的核心知识条目"
+    id_pattern: "ITEM-{name}"
+    properties:
+      - name: name
+        display_name: "名称"
+        type: string
+        required: true
+      - name: description
+        display_name: "描述"
+        type: string
+        required: true
+      - name: aliases
+        display_name: "别名"
+        type: list
+      - name: category
+        display_name: "分类"
+        type: string
+      - name: tags
+        display_name: "标签"
+        type: list
+
+  - name: concept
+    display_name: "概念"
+    plural_name: "概念词典"
+    description: "领域专业术语和概念"
+    id_pattern: "CON-{name}"
+    properties:
+      - name: definition
+        display_name: "定义"
+        type: string
+        required: true
+      - name: aliases
+        display_name: "别名"
+        type: list
+      - name: related_concepts
+        display_name: "相关概念"
+        type: list
+
+# ===== 关系类型定义 =====
+# 定义实体之间的关系。每个关系需要：
+#   - name: 关系名
+#   - source: 源实体类型
+#   - target: 目标实体类型
+
+relation_types:
+  - name: related_to
+    display_name: "相关"
+    source: concept
+    target: concept
+    description: "概念之间的关联"
+  - name: belongs_to
+    display_name: "属于"
+    source: item
+    target: item
+    description: "条目之间的归属关系"
+
+# ===== 文档分类 =====
+# 按你的文档类型添加分类
+
+categories:
+  - name: documents
+    display_name: "文档资料"
+  - name: references
+    display_name: "参考资料"
+  - name: guides
+    display_name: "操作指南"
+
+# ===== 映射页面定义 =====
+
+mappings:
+  - name: glossary
+    display_name: "术语对照表"
+    description: "领域术语对照"
+  - name: entity-index
+    display_name: "实体索引"
+    description: "所有实体的交叉索引"
+
+# ===== 同步目标配置 =====
+# 可选：留空则不同步到外部平台
+
+sync:
+  platform: "local"               # lexiang | ima | wps | local
+  config: {}
+  sync_scope:
+    - wiki
